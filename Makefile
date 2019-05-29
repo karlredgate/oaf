@@ -33,4 +33,4 @@ derived: derived.o
 	$(CC) -o $@ $^
 
 clean:
-	rm -f *.o $(CLEANS) x??
+	rm -f *.o $(CLEANS) data.log
