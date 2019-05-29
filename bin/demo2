@@ -1,0 +1,24 @@
+#!/bin/bash
+
+function process() {
+   local partition=$1
+
+    let lines="$( wc -l < data.log )"
+    let size="($lines+1)/$partition"
+    split -l $size data.log
+
+    for file in x??
+    do
+        # aggregate each chunk of the file
+        awk '{print $1}' < $file | ./injest
+    done | ./merge | ./derived
+    rm x??
+}
+
+bash bin/rdata > data.log
+
+awk '{print $1}' < data.log | ./moments
+process 2
+process 4
+process 5
+process 8

@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Create some random data
+#
+
+let count="$RANDOM + $RANDOM + $RANDOM + $RANDOM + $RANDOM + $RANDOM"
+
+echo "Generating $count values..." 1>&2
+
+while (( $count > 0 ))
+do
+    echo $RANDOM
+    let count="$count - 1"
+done
