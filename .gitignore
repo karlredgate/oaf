@@ -54,3 +54,6 @@ dkms.conf
 # execs
 /moments
 /welford
+/injest
+/merge
+/derived
