@@ -12,6 +12,7 @@ function process() {
         # aggregate each chunk of the file
         awk '{print $5}' < $file | ./injest
     done | ./merge | ./derived
+    rm x??
 }
 
 awk '{print $5}' < sample.ssv | ./moments
