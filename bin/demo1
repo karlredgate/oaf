@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function process() {
+   local partition=$1
+
+    let lines="$( wc -l < sample.ssv )"
+    let size="($lines+1)/$partition"
+    split -l $size sample.ssv
+
+    for file in x??
+    do
+        # aggregate each chunk of the file
+        awk '{print $5}' < $file | ./injest
+    done | ./merge | ./derived
+}
+
+awk '{print $5}' < sample.ssv | ./moments
+process 2
+process 4
+process 5
+process 8
