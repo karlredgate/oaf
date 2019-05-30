@@ -2,8 +2,29 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 static int verbose = 1;
+static int json = 0;
+static char *command;
+
+static char jsonOpt[] = "--json";
+
+static void
+init( int argc, char **argv ) {
+    command = *argv++; argc--;
+    while ( argc > 0 ) {
+        do {
+            if ( strncmp(*argv, jsonOpt, sizeof jsonOpt) == 0 ) {
+                json = 1;
+                break;
+            }
+            printf( "Unknown arg '%s'\n", *argv );
+            exit( -1 );
+        } while (0);
+        argv++; argc--;
+    }
+}
 
 struct moments {
     double m1;
@@ -74,7 +95,18 @@ merge( struct moments *c, struct moments *a, struct moments *b ) {
     c->m4 += 4.0 * delta  * (a->n * b->m3 - b->n * a->m3) / c->n;
 }
 
+void
+print_json( struct moments *s ) {
+    printf( "{\"n\":%lld,", s->n );
+    printf( " \"M1\":%lf,", s->m1 );
+    printf( " \"M2\":%lf,", s->m2 );
+    printf( " \"M3\":%lf,", s->m3 );
+    printf( " \"M4\":%lf}", s->m4 );
+}
+
 int main( int argc, char **argv ) {
+    init( argc, argv );
+
     struct moments s;
     struct moments t;
     struct moments u;
@@ -91,6 +123,10 @@ int main( int argc, char **argv ) {
         merge( &s, &t, &u );
     }
 
+    if ( json ) {
+        print_json( &s );
+        exit( 0 );
+    }
     printf( "%lld %lf %lf %lf %lf\n", s.n, s.m1, s.m2, s.m3, s.m4 );
 }
 

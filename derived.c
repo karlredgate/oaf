@@ -2,8 +2,29 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 static int verbose = 1;
+static int json = 0;
+static char *command;
+
+static char jsonOpt[] = "--json";
+
+static void
+init( int argc, char **argv ) {
+    command = *argv++; argc--;
+    while ( argc > 0 ) {
+        do {
+            if ( strncmp(*argv, jsonOpt, sizeof jsonOpt) == 0 ) {
+                json = 1;
+                break;
+            }
+            printf( "Unknown arg '%s'\n", *argv );
+            exit( -1 );
+        } while (0);
+        argv++; argc--;
+    }
+}
 
 struct moments {
     double m1;
@@ -65,7 +86,19 @@ verbose_print( struct moments *s ) {
     printf( "%lld µ=%lf σ=%lf γ=%lf κ=%lf %lf\n", s->n, mean(s), stddev(s), skewness(s), kurtosis(s), variance(s) );
 }
 
+void
+print_json( struct moments *s ) {
+    printf( "{\"n\":%lld,", s->n );
+    printf( " \"µ\":%lf,", mean(s) );
+    printf( " \"σ\":%lf,", stddev(s) );
+    printf( " \"γ\":%lf,", skewness(s) );
+    printf( " \"κ\":%lf}", kurtosis(s) );
+    printf( "\n" );
+}
+
 int main( int argc, char **argv ) {
+    init( argc, argv );
+
     struct moments s;
     clear( &s );
 
@@ -76,11 +109,15 @@ int main( int argc, char **argv ) {
         exit( 1 );
     }
 
+    if ( json ) {
+        print_json( &s );
+        exit( 0 );
+    }
     if ( verbose ) {
         verbose_print( &s );
-    } else {
-        simple_print( &s );
+        exit( 0 );
     }
+    simple_print( &s );
 }
 
 /* vim: set autoindent expandtab sw=4 : */
