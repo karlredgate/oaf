@@ -1,5 +1,5 @@
 
-default: build test
+default: build test verify
 
 build: moments welford injest derived merge
 
@@ -9,8 +9,11 @@ test: build
 	awk '{print $$5}' < sample.ssv  | time ./moments
 	awk '{print $$5}' < sample.ssv  | time ./welford
 	bash bin/demo1
-	time julia mean.jl
 	bash bin/demo2
+
+verify:
+	which julia || echo "Need Julia installed to run this test"
+	time julia mean.jl
 
 CLEANS += moments
 moments: moments.o
