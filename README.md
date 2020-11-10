@@ -12,3 +12,4 @@ internal moments.  The `derived` command reads the merge output
 (or the output of a single shard) and reports the std dev,
 kurtosis and skew.
 
+See demo scripts in the `bin/` directory.
